@@ -17,7 +17,7 @@ export function ClientShell({ children }: ClientShellProps) {
   return (
     <div className="relative min-h-screen bg-black flex flex-col">
       {/* Particle background — fixed, never unmounts across route changes */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
         <DottedSurface />
       </div>
 
@@ -25,7 +25,7 @@ export function ClientShell({ children }: ClientShellProps) {
       <SiteNav />
 
       {/* Page content — swaps on navigation */}
-      <div className="flex flex-col flex-1">
+      <div className="flex flex-col flex-1 relative z-10">
         {children}
       </div>
     </div>

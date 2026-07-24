@@ -89,7 +89,7 @@ export default function AboutPage() {
               <motion.div
                 key={item.title}
                 variants={itemVariants}
-                className="group flex flex-col gap-4 rounded-2xl border border-[#1c1c1c] bg-[#090909] p-6 hover:bg-[#121212] hover:border-[#333] transition-all duration-300"
+                className="group flex flex-col gap-4 rounded-2xl border border-[#1c1c1c] bg-black p-6 hover:bg-[#121212] hover:border-[#333] transition-all duration-300"
               >
                 <div className="w-10 h-10 rounded-xl bg-foreground/10 flex items-center justify-center">
                   {item.icon}
@@ -105,10 +105,10 @@ export default function AboutPage() {
 
 
 
-        {/* By the Numbers */}
+        {/* The Devstart Promise */}
         <section className="space-y-8">
           <div className="text-center">
-            <h2 className="text-[1.8rem] font-bold leading-tight tracking-tight text-foreground">By the Numbers</h2>
+            <h2 className="text-[1.8rem] font-bold leading-tight tracking-tight text-foreground">The Devstart Promise</h2>
           </div>
           <motion.div
             className="grid grid-cols-2 sm:grid-cols-4 gap-4"
@@ -117,15 +117,15 @@ export default function AboutPage() {
             animate="show"
           >
             {[
-              { stat: '220+', label: 'Partner Companies' },
-              { stat: '1,400+', label: 'Internships Placed' },
-              { stat: '60+', label: 'Cities & Remote' },
-              { stat: '4.8 / 5', label: 'Avg. Dev Rating' },
+              { stat: '100%', label: 'Free for Developers' },
+              { stat: 'Direct', label: 'To Hiring Teams' },
+              { stat: 'Zero', label: 'Ghost Listings' },
+              { stat: 'Global', label: 'Remote Opportunities' },
             ].map((item) => (
               <motion.div
                 key={item.label}
                 variants={itemVariants}
-                className="flex flex-col items-center justify-center gap-1 rounded-2xl border border-[#1c1c1c] bg-[#090909] py-8 px-4 text-center hover:bg-[#121212] hover:border-[#333] transition-all duration-300"
+                className="flex flex-col items-center justify-center gap-1 rounded-2xl border border-[#1c1c1c] bg-black py-8 px-4 text-center hover:bg-[#121212] hover:border-[#333] transition-all duration-300"
               >
                 <span className="text-[2rem] font-bold text-foreground leading-none">{item.stat}</span>
                 <span className="text-xs text-muted/70 mt-1">{item.label}</span>
