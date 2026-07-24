@@ -101,7 +101,7 @@ export default function FeaturesPage() {
               <motion.div
                 key={feature.title}
                 variants={itemVariants}
-                className={`group flex flex-col gap-5 rounded-2xl border border-[#1c1c1c] bg-black p-7 hover:bg-[#121212] hover:border-[#333] transition-all duration-300 ${
+                className={`group flex flex-col gap-5 rounded-2xl border border-[#1c1c1c] bg-[#121212] p-7 hover:bg-[#1a1a1a] hover:border-[#333] transition-all duration-300 ${
                   // Last item spans full width on odd total count
                   i === features.length - 1 && features.length % 2 !== 0
                     ? 'sm:col-span-2'

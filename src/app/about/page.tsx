@@ -89,7 +89,7 @@ export default function AboutPage() {
               <motion.div
                 key={item.title}
                 variants={itemVariants}
-                className="group flex flex-col gap-4 rounded-2xl border border-[#1c1c1c] bg-black p-6 hover:bg-[#121212] hover:border-[#333] transition-all duration-300"
+                className="group flex flex-col gap-4 rounded-2xl border border-[#1c1c1c] bg-[#121212] p-6 hover:bg-[#1a1a1a] hover:border-[#333] transition-all duration-300"
               >
                 <div className="w-10 h-10 rounded-xl bg-foreground/10 flex items-center justify-center">
                   {item.icon}
@@ -125,7 +125,7 @@ export default function AboutPage() {
               <motion.div
                 key={item.label}
                 variants={itemVariants}
-                className="flex flex-col items-center justify-center gap-1 rounded-2xl border border-[#1c1c1c] bg-black py-8 px-4 text-center hover:bg-[#121212] hover:border-[#333] transition-all duration-300"
+                className="flex flex-col items-center justify-center gap-1 rounded-2xl border border-[#1c1c1c] bg-[#121212] py-8 px-4 text-center hover:bg-[#1a1a1a] hover:border-[#333] transition-all duration-300"
               >
                 <span className="text-[2rem] font-bold text-foreground leading-none">{item.stat}</span>
                 <span className="text-xs text-muted/70 mt-1">{item.label}</span>

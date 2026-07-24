@@ -72,7 +72,7 @@ export function FaqAccordion() {
             variants={itemVariants}
             className={cn(
               'rounded-2xl border transition-colors duration-200',
-              isOpen ? 'border-[#333] bg-[#121212]' : 'border-[#1c1c1c] bg-black',
+              isOpen ? 'border-[#333] bg-[#1a1a1a]' : 'border-[#1c1c1c] bg-[#121212]',
             )}
           >
             <button
