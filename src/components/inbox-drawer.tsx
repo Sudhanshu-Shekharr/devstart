@@ -160,36 +160,29 @@ export function InboxDrawer({ isOpen, onClose }: InboxDrawerProps) {
     saveThreads(updatedThreads);
     setShowScheduler(false);
 
-    // Update application stage in tracker
-    const storedApps = localStorage.getItem('devstart:applications');
-    if (storedApps && activeThread) {
-      const apps = JSON.parse(storedApps);
-      const updatedApps = apps.map((app: any) => {
-        // Match by company name
-        if (app.company.toLowerCase() === activeThread.company.toLowerCase()) {
-          return {
-            ...app,
-            stage: 'Interview Scheduled'
-          };
-        }
-        return app;
-      });
-      
-      // If application doesn't exist, we add a mock one
-      const exists = apps.some((app: any) => app.company.toLowerCase() === activeThread.company.toLowerCase());
-      if (!exists) {
-        updatedApps.unshift({
-          id: `inbox-${Date.now()}`,
-          role: activeThread.role,
-          company: activeThread.company,
-          stage: 'Interview Scheduled',
-          date: 'Jul 10'
-        });
-      }
-
-      localStorage.setItem('devstart:applications', JSON.stringify(updatedApps));
-      // Notify stats dynamically
-      window.dispatchEvent(new Event('devstart:state-change'));
+    // Update application stage in tracker via API
+    if (activeThread) {
+      // Find matching application by fetching
+      fetch('/api/applications')
+        .then(res => res.json())
+        .then(data => {
+          const apps = data.applications || [];
+          const app = apps.find((a: any) => a.internship.company.toLowerCase() === activeThread.company.toLowerCase());
+          
+          if (app) {
+            // Update existing application
+            return fetch(`/api/applications/${app.id}`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ status: 'Interview Scheduled' })
+            });
+          }
+        })
+        .then(() => {
+          // Notify stats dynamically
+          window.dispatchEvent(new Event('devstart:state-change'));
+        })
+        .catch(console.error);
     }
 
     // Simulate recruiter reply
@@ -223,7 +216,7 @@ export function InboxDrawer({ isOpen, onClose }: InboxDrawerProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            className="absolute inset-0 bg-background/80 backdrop-blur-sm"
           />
 
           {/* Drawer Wrapper */}
@@ -231,14 +224,14 @@ export function InboxDrawer({ isOpen, onClose }: InboxDrawerProps) {
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ type: 'tween', duration: 0.35, ease: 'easeOut' }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
             className="relative w-full max-w-4xl h-full border-l border-[#333] bg-[#090909] flex shadow-2xl z-10"
           >
             {/* Thread selector (left panel) */}
-            <div className="w-1/3 border-r border-[#1c1c1c] h-full flex flex-col bg-black">
+            <div className="w-1/3 border-r border-[#1c1c1c] h-full flex flex-col bg-[#090909]">
               <div className="p-5 border-b border-[#1c1c1c] flex items-center justify-between">
-                <h3 className="text-white font-bold text-base tracking-tight">Inbox</h3>
-                <span className="text-[10px] text-white/40 uppercase font-semibold">Recruiters</span>
+                <h3 className="text-foreground font-bold text-base tracking-tight">Inbox</h3>
+                <span className="text-[10px] text-muted/70 uppercase font-semibold">Recruiters</span>
               </div>
               <div className="flex-1 overflow-y-auto divide-y divide-[#121212]">
                 {threads.map(t => {
@@ -253,19 +246,19 @@ export function InboxDrawer({ isOpen, onClose }: InboxDrawerProps) {
                       }}
                       className={cn(
                         "w-full text-left p-4 flex gap-3 transition-colors cursor-pointer",
-                        isActive ? "bg-white/5" : "hover:bg-white/[0.02]"
+                        isActive ? "bg-foreground/5" : "hover:bg-foreground/[0.02]"
                       )}
                     >
-                      <div className="w-9 h-9 rounded-full bg-white/10 border border-[#333] flex items-center justify-center shrink-0">
-                        <span className="text-[10px] text-white font-bold">{t.avatar}</span>
+                      <div className="w-9 h-9 rounded-full bg-foreground/10 border border-[#333] flex items-center justify-center shrink-0">
+                        <span className="text-[10px] text-foreground font-bold">{t.avatar}</span>
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center justify-between">
-                          <p className="text-xs text-white font-semibold truncate">{t.from}</p>
-                          <span className="text-[8px] text-white/30 shrink-0">{lastMsg?.time || ''}</span>
+                          <p className="text-xs text-foreground font-semibold truncate">{t.from}</p>
+                          <span className="text-[8px] text-foreground/30 shrink-0">{lastMsg?.time || ''}</span>
                         </div>
-                        <p className="text-[10px] text-white/40 truncate">{t.company}</p>
-                        <p className="text-[10px] text-white/60 truncate mt-1 leading-normal italic">
+                        <p className="text-[10px] text-muted/70 truncate">{t.company}</p>
+                        <p className="text-[10px] text-muted truncate mt-1 leading-normal italic">
                           {lastMsg ? lastMsg.text : ''}
                         </p>
                       </div>
@@ -281,17 +274,17 @@ export function InboxDrawer({ isOpen, onClose }: InboxDrawerProps) {
               {activeThread && (
                 <div className="p-4 border-b border-[#1c1c1c] flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-white/10 border border-[#333] flex items-center justify-center">
-                      <span className="text-[9px] text-white font-bold">{activeThread.avatar}</span>
+                    <div className="w-8 h-8 rounded-full bg-foreground/10 border border-[#333] flex items-center justify-center">
+                      <span className="text-[9px] text-foreground font-bold">{activeThread.avatar}</span>
                     </div>
                     <div>
-                      <p className="text-xs text-white font-bold">{activeThread.from}</p>
-                      <p className="text-[10px] text-white/40">{activeThread.company} · {activeThread.role}</p>
+                      <p className="text-xs text-foreground font-bold">{activeThread.from}</p>
+                      <p className="text-[10px] text-muted/70">{activeThread.company} · {activeThread.role}</p>
                     </div>
                   </div>
                   <button
                     onClick={onClose}
-                    className="text-white/40 hover:text-white transition-colors cursor-pointer p-1.5 hover:bg-white/5 rounded-full"
+                    className="text-muted/70 hover:text-foreground transition-colors cursor-pointer p-1.5 hover:bg-foreground/5 rounded-full"
                     aria-label="Close panel"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -317,14 +310,14 @@ export function InboxDrawer({ isOpen, onClose }: InboxDrawerProps) {
                         className={cn(
                           "max-w-[75%] rounded-2xl px-4 py-2.5 text-xs leading-relaxed",
                           isUser
-                            ? "bg-white text-black font-medium rounded-tr-sm"
-                            : "bg-black border border-[#1c1c1c] text-white/90 rounded-tl-sm"
+                            ? "bg-foreground text-black font-medium rounded-tr-sm"
+                            : "bg-[#121212] border border-[#1c1c1c] text-foreground/90 rounded-tl-sm"
                         )}
                       >
                         <p>{msg.text}</p>
                         <span className={cn(
                           "text-[8px] mt-1 block text-right",
-                          isUser ? "text-black/50" : "text-white/30"
+                          isUser ? "text-black/50" : "text-foreground/30"
                         )}>
                           {msg.time}
                         </span>
@@ -338,13 +331,13 @@ export function InboxDrawer({ isOpen, onClose }: InboxDrawerProps) {
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="rounded-xl border border-[#333] bg-black p-4 space-y-3 max-w-sm"
+                    className="rounded-xl border border-[#333] bg-[#121212] p-4 space-y-3 max-w-sm"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] text-white/50 uppercase font-bold tracking-wider">Select Interview Time</span>
+                      <span className="text-[10px] text-muted/80 uppercase font-bold tracking-wider">Select Interview Time</span>
                       <button
                         onClick={() => setShowScheduler(false)}
-                        className="text-[9px] text-white/30 hover:text-white hover:underline cursor-pointer"
+                        className="text-[9px] text-foreground/30 hover:text-foreground hover:underline cursor-pointer"
                       >
                         Cancel
                       </button>
@@ -354,13 +347,13 @@ export function InboxDrawer({ isOpen, onClose }: InboxDrawerProps) {
                         <button
                           key={slot.id}
                           onClick={() => handleScheduleConfirm(slot)}
-                          className="w-full text-left p-3 rounded-lg border border-[#1c1c1c] bg-[#090909] hover:bg-[#121212] hover:border-white/30 transition-all text-xs flex justify-between items-center cursor-pointer group"
+                          className="w-full text-left p-3 rounded-lg border border-[#1c1c1c] bg-[#090909] hover:bg-[#121212] hover:border-foreground/30 transition-all text-xs flex justify-between items-center cursor-pointer group"
                         >
                           <div>
-                            <p className="text-white font-semibold">{slot.date}</p>
-                            <p className="text-white/40 text-[10px] mt-0.5">{slot.time}</p>
+                            <p className="text-foreground font-semibold">{slot.date}</p>
+                            <p className="text-muted/70 text-[10px] mt-0.5">{slot.time}</p>
                           </div>
-                          <span className="text-[10px] text-black bg-white rounded-full px-2.5 py-1 font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+                          <span className="text-[10px] text-black bg-foreground rounded-full px-2.5 py-1 font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
                             Book
                           </span>
                         </button>
@@ -373,13 +366,13 @@ export function InboxDrawer({ isOpen, onClose }: InboxDrawerProps) {
               </div>
 
               {/* Controls & Quick responses */}
-              <div className="p-4 border-t border-[#1c1c1c] space-y-3 bg-black">
+              <div className="p-4 border-t border-[#1c1c1c] space-y-3 bg-[#090909]">
                 {/* Quick actions row */}
                 {!showScheduler && (
                   <div className="flex flex-wrap gap-1.5">
                     <button
                       onClick={() => setShowScheduler(true)}
-                      className="text-[9px] font-bold text-black bg-white rounded-full px-3 py-1.5 hover:bg-white/90 transition-colors cursor-pointer flex items-center gap-1"
+                      className="text-[9px] font-bold text-black bg-foreground rounded-full px-3 py-1.5 hover:bg-foreground/90 transition-colors cursor-pointer flex items-center gap-1"
                     >
                       <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -388,13 +381,13 @@ export function InboxDrawer({ isOpen, onClose }: InboxDrawerProps) {
                     </button>
                     <button
                       onClick={() => handleSendMessage("Could you tell me more about the technology stack and architecture of the team?")}
-                      className="text-[9px] font-semibold text-white/70 border border-[#1c1c1c] hover:border-[#333] hover:text-white rounded-full px-3 py-1.5 transition-colors cursor-pointer"
+                      className="text-[9px] font-semibold text-foreground/70 border border-[#1c1c1c] hover:border-[#333] hover:text-foreground rounded-full px-3 py-1.5 transition-colors cursor-pointer"
                     >
                       Ask about stack
                     </button>
                     <button
                       onClick={() => handleSendMessage("Thank you! I will look forward to the interview details.")}
-                      className="text-[9px] font-semibold text-white/70 border border-[#1c1c1c] hover:border-[#333] hover:text-white rounded-full px-3 py-1.5 transition-colors cursor-pointer"
+                      className="text-[9px] font-semibold text-foreground/70 border border-[#1c1c1c] hover:border-[#333] hover:text-foreground rounded-full px-3 py-1.5 transition-colors cursor-pointer"
                     >
                       Thank you!
                     </button>
@@ -414,11 +407,11 @@ export function InboxDrawer({ isOpen, onClose }: InboxDrawerProps) {
                     placeholder="Write a message..."
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
-                    className="w-full bg-[#090909] border border-[#1c1c1c] rounded-full py-2.5 pl-4 pr-12 text-white text-xs placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-colors"
+                    className="w-full bg-[#090909] border border-[#1c1c1c] rounded-full py-2.5 pl-4 pr-12 text-foreground text-xs placeholder:text-muted/40 focus:outline-none focus:border-foreground/30 transition-colors"
                   />
                   <button
                     type="submit"
-                    className="absolute right-1 top-1 text-black bg-white hover:bg-white/90 rounded-full w-8 h-8 flex items-center justify-center transition-colors cursor-pointer"
+                    className="absolute right-1 top-1 text-black bg-foreground hover:bg-foreground/90 rounded-full w-8 h-8 flex items-center justify-center transition-colors cursor-pointer"
                     aria-label="Send"
                   >
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">

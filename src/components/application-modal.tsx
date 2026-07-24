@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSession } from 'next-auth/react';
 
 interface ApplicationModalProps {
   isOpen: boolean;
@@ -22,11 +23,15 @@ export function ApplicationModal({ isOpen, onClose, internship, onSubmitSuccess 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  const { data: session } = useSession();
+
   useEffect(() => {
     if (isOpen) {
-      if (typeof window !== 'undefined') {
-        const storedEmail = localStorage.getItem('userEmail');
-        if (storedEmail) setEmail(storedEmail);
+      if (session?.user?.email) {
+        setEmail(session.user.email);
+      }
+      if (session?.user?.name) {
+        setName(session.user.name);
       }
       setIsSuccess(false);
       setIsSubmitting(false);
@@ -63,7 +68,7 @@ export function ApplicationModal({ isOpen, onClose, internship, onSubmitSuccess 
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/80 backdrop-blur-md"
+            className="absolute inset-0 bg-background/80 backdrop-blur-md"
           />
 
           {/* Modal Container */}
@@ -75,11 +80,11 @@ export function ApplicationModal({ isOpen, onClose, internship, onSubmitSuccess 
             className="relative w-full max-w-lg rounded-2xl border border-[#333] bg-[#090909] p-6 shadow-2xl overflow-hidden"
           >
             {/* Top design highlight */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-neutral-800 via-neutral-400 to-neutral-800" />
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-border-strong via-muted to-border-strong" />
 
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 text-white/40 hover:text-white transition-colors cursor-pointer"
+              className="absolute top-4 right-4 text-muted/70 hover:text-foreground transition-colors cursor-pointer"
               aria-label="Close"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -97,31 +102,31 @@ export function ApplicationModal({ isOpen, onClose, internship, onSubmitSuccess 
                   className="space-y-5"
                 >
                   <div>
-                    <span className="text-[10px] text-white/40 uppercase tracking-[0.2em] font-semibold">Applying for</span>
-                    <h2 className="text-xl font-bold text-white tracking-tight mt-0.5">{internship.role}</h2>
-                    <p className="text-sm text-white/50">{internship.company}</p>
+                    <span className="text-[10px] text-muted/70 uppercase tracking-[0.2em] font-semibold">Applying for</span>
+                    <h2 className="text-xl font-bold text-foreground tracking-tight mt-0.5">{internship.role}</h2>
+                    <p className="text-sm text-muted/80">{internship.company}</p>
                   </div>
 
                   <form onSubmit={handleSubmit} className="space-y-4">
                     {/* Name & Email fields */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div className="space-y-1.5">
-                        <label className="text-[10px] text-white/50 uppercase tracking-wider font-semibold">Full Name</label>
+                        <label className="text-[10px] text-muted/80 uppercase tracking-wider font-semibold">Full Name</label>
                         <input
                           type="text"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
-                          className="w-full bg-black border border-[#1c1c1c] rounded-xl py-2 px-3 text-white text-xs placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-colors"
+                          className="w-full bg-black border border-[#1c1c1c] rounded-xl py-2 px-3 text-foreground text-xs placeholder:text-muted/40 focus:outline-none focus:border-foreground/30 transition-colors"
                           required
                         />
                       </div>
                       <div className="space-y-1.5">
-                        <label className="text-[10px] text-white/50 uppercase tracking-wider font-semibold">Email Address</label>
+                        <label className="text-[10px] text-muted/80 uppercase tracking-wider font-semibold">Email Address</label>
                         <input
                           type="email"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          className="w-full bg-black border border-[#1c1c1c] rounded-xl py-2 px-3 text-white text-xs placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-colors"
+                          className="w-full bg-black border border-[#1c1c1c] rounded-xl py-2 px-3 text-foreground text-xs placeholder:text-muted/40 focus:outline-none focus:border-foreground/30 transition-colors"
                           required
                         />
                       </div>
@@ -129,21 +134,21 @@ export function ApplicationModal({ isOpen, onClose, internship, onSubmitSuccess 
 
                     {/* Resume Upload Box */}
                     <div className="space-y-1.5">
-                      <label className="text-[10px] text-white/50 uppercase tracking-wider font-semibold">Resume / CV</label>
-                      <div className="border border-dashed border-[#333] hover:border-white/30 rounded-xl p-4 bg-black/50 text-center transition-colors cursor-pointer group">
+                      <label className="text-[10px] text-muted/80 uppercase tracking-wider font-semibold">Resume / CV</label>
+                      <div className="border border-dashed border-[#333] hover:border-foreground/30 rounded-xl p-4 bg-background/50 text-center transition-colors cursor-pointer group">
                         <div className="flex flex-col items-center justify-center gap-1.5">
-                          <svg className="w-5 h-5 text-white/30 group-hover:text-white/60 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-5 h-5 text-foreground/30 group-hover:text-muted transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                           </svg>
-                          <span className="text-xs text-white font-medium">{resumeName}</span>
-                          <span className="text-[10px] text-white/30">Click or drag new PDF to update</span>
+                          <span className="text-xs text-foreground font-medium">{resumeName}</span>
+                          <span className="text-[10px] text-foreground/30">Click or drag new PDF to update</span>
                         </div>
                       </div>
                     </div>
 
                     {/* Short Pitch */}
                     <div className="space-y-1.5">
-                      <label className="text-[10px] text-white/50 uppercase tracking-wider font-semibold">
+                      <label className="text-[10px] text-muted/80 uppercase tracking-wider font-semibold">
                         Why are you a good fit? (Optional)
                       </label>
                       <textarea
@@ -151,7 +156,7 @@ export function ApplicationModal({ isOpen, onClose, internship, onSubmitSuccess 
                         placeholder="Briefly describe your relevant experience, projects, or why you're interested in this role..."
                         value={pitch}
                         onChange={(e) => setPitch(e.target.value)}
-                        className="w-full bg-black border border-[#1c1c1c] rounded-xl py-2 px-3 text-white text-xs placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-colors resize-none leading-relaxed"
+                        className="w-full bg-black border border-[#1c1c1c] rounded-xl py-2 px-3 text-foreground text-xs placeholder:text-muted/40 focus:outline-none focus:border-foreground/30 transition-colors resize-none leading-relaxed"
                       />
                     </div>
 
@@ -159,7 +164,7 @@ export function ApplicationModal({ isOpen, onClose, internship, onSubmitSuccess 
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full rounded-full bg-white text-black font-semibold py-2.5 hover:bg-white/90 disabled:bg-neutral-800 disabled:text-neutral-500 transition-all duration-200 text-xs flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full rounded-full bg-foreground text-black font-semibold py-2.5 hover:bg-foreground/90 disabled:bg-border-strong disabled:text-neutral-500 transition-all duration-200 text-xs flex items-center justify-center gap-2 cursor-pointer"
                     >
                       {isSubmitting ? (
                         <>
@@ -183,14 +188,14 @@ export function ApplicationModal({ isOpen, onClose, internship, onSubmitSuccess 
                   exit={{ opacity: 0 }}
                   className="py-8 text-center space-y-4"
                 >
-                  <div className="mx-auto w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-lg">
+                  <div className="mx-auto w-12 h-12 rounded-full bg-foreground flex items-center justify-center shadow-lg">
                     <svg className="h-6 w-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-white">Application Submitted!</h3>
-                    <p className="text-xs text-white/50 mt-1">
+                    <h3 className="text-lg font-bold text-foreground">Application Submitted!</h3>
+                    <p className="text-xs text-muted/80 mt-1">
                       Your profile has been shared with {internship.company}.
                     </p>
                   </div>

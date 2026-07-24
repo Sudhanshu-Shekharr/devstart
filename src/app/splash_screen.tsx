@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 
 /* -------------------------------------------------------------------------- */
 /*  DottedSurface — animated waving-dots background (Three.js)                */
@@ -178,8 +179,8 @@ export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
 /* -------------------------------------------------------------------------- */
 
 const AnimatedNavLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
-  const defaultTextColor = 'text-gray-300';
-  const hoverTextColor = 'text-white';
+  const defaultTextColor = 'text-muted';
+  const hoverTextColor = 'text-foreground';
   const textSizeClass = 'text-xs lg:text-sm';
 
   return (
@@ -230,14 +231,14 @@ function MiniNavbar({ flowType, setFlowType, resetForm }: MiniNavbarProps) {
   const logoElement = (
     <div className="flex items-center gap-2 group select-none">
       <div className="relative w-5 h-5 flex items-center justify-center shrink-0">
-        <div className="absolute inset-0 bg-white/20 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        <span className="absolute w-1.5 h-1.5 rounded-full bg-white top-0 left-1/2 transform -translate-x-1/2 transition-all duration-300 group-hover:-translate-y-0.5" />
-        <span className="absolute w-1.5 h-1.5 rounded-full bg-white left-0 top-1/2 transform -translate-y-1/2 transition-all duration-300 group-hover:-translate-x-0.5" />
-        <span className="absolute w-1.5 h-1.5 rounded-full bg-white right-0 top-1/2 transform -translate-y-1/2 transition-all duration-300 group-hover:translate-x-0.5" />
-        <span className="absolute w-1.5 h-1.5 rounded-full bg-white bottom-0 left-1/2 transform -translate-x-1/2 transition-all duration-300 group-hover:translate-y-0.5" />
-        <span className="absolute w-1 h-1 rounded-full bg-white/50" />
+        <div className="absolute inset-0 bg-foreground/20 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <span className="absolute w-1.5 h-1.5 rounded-full bg-foreground top-0 left-1/2 transform -translate-x-1/2 transition-all duration-300 group-hover:-translate-y-0.5" />
+        <span className="absolute w-1.5 h-1.5 rounded-full bg-foreground left-0 top-1/2 transform -translate-y-1/2 transition-all duration-300 group-hover:-translate-x-0.5" />
+        <span className="absolute w-1.5 h-1.5 rounded-full bg-foreground right-0 top-1/2 transform -translate-y-1/2 transition-all duration-300 group-hover:translate-x-0.5" />
+        <span className="absolute w-1.5 h-1.5 rounded-full bg-foreground bottom-0 left-1/2 transform -translate-x-1/2 transition-all duration-300 group-hover:translate-y-0.5" />
+        <span className="absolute w-1 h-1 rounded-full bg-foreground/50" />
       </div>
-      <span className="text-white font-bold tracking-tight text-sm">
+      <span className="text-foreground font-bold tracking-tight text-sm">
         Devstart
       </span>
     </div>
@@ -267,7 +268,7 @@ function MiniNavbar({ flowType, setFlowType, resetForm }: MiniNavbarProps) {
         "px-2.5 py-1.5 lg:px-4 lg:py-2 text-xs lg:text-sm rounded-full transition-all duration-200 w-full md:w-auto",
         flowType === 'login'
           ? "font-semibold text-black bg-gradient-to-br from-gray-100 to-gray-300 hover:from-gray-200 hover:to-gray-400"
-          : "border border-[#333] bg-[rgba(31,31,31,0.62)] text-gray-300 hover:border-white/50 hover:text-white"
+          : "border border-[#333] bg-[rgba(31,31,31,0.62)] text-muted hover:border-foreground/50 hover:text-foreground"
       )}
     >
       LogIn
@@ -281,7 +282,7 @@ function MiniNavbar({ flowType, setFlowType, resetForm }: MiniNavbarProps) {
         "px-2.5 py-1.5 lg:px-4 lg:py-2 text-xs lg:text-sm rounded-full transition-all duration-200 z-10 w-full md:w-auto",
         flowType === 'signup'
           ? "font-semibold text-black bg-gradient-to-br from-gray-100 to-gray-300 hover:from-gray-200 hover:to-gray-400"
-          : "border border-[#333] bg-[rgba(31,31,31,0.62)] text-gray-300 hover:border-white/50 hover:text-white"
+          : "border border-[#333] bg-[rgba(31,31,31,0.62)] text-muted hover:border-foreground/50 hover:text-foreground"
       )}
     >
       Signup
@@ -321,7 +322,7 @@ function MiniNavbar({ flowType, setFlowType, resetForm }: MiniNavbarProps) {
           {signupButtonElement}
         </div>
 
-        <button className="md:hidden flex items-center justify-center w-8 h-8 text-gray-300 focus:outline-none" onClick={toggleMenu} aria-label={isOpen ? 'Close Menu' : 'Open Menu'}>
+        <button className="md:hidden flex items-center justify-center w-8 h-8 text-muted focus:outline-none" onClick={toggleMenu} aria-label={isOpen ? 'Close Menu' : 'Open Menu'}>
           {isOpen ? (
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
           ) : (
@@ -334,7 +335,7 @@ function MiniNavbar({ flowType, setFlowType, resetForm }: MiniNavbarProps) {
                        ${isOpen ? 'max-h-[1000px] opacity-100 pt-4' : 'max-h-0 opacity-0 pt-0 pointer-events-none'}`}>
         <nav className="flex flex-col items-center space-y-4 text-base w-full">
           {navLinksData.map((link) => (
-            <a key={link.href} href={link.href} className="text-gray-300 hover:text-white transition-colors w-full text-center">
+            <a key={link.href} href={link.href} className="text-muted hover:text-foreground transition-colors w-full text-center">
               {link.label}
             </a>
           ))}
@@ -490,24 +491,24 @@ function SignInPageInner({ className, noShell }: SignInPageProps) {
             className="space-y-6 text-center"
           >
             <div className="space-y-1 flex flex-col items-center">
-              <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-tight text-white whitespace-nowrap">Land Your First Dev Internship</h1>
-              <p className="text-xl text-white/70 font-light">Sign in to start applying</p>
+              <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-tight text-foreground whitespace-nowrap">Land Your First Dev Internship</h1>
+              <p className="text-xl text-foreground/70 font-light">Sign in to start applying</p>
             </div>
 
             <div className="space-y-4">
               <button
                 type="button"
-                onClick={() => setShowToast(true)}
-                className="backdrop-blur-[2px] w-full flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-full py-3 px-4 transition-colors"
+                onClick={() => signIn('github', { callbackUrl: '/dashboard' })}
+                className="backdrop-blur-[2px] w-full flex items-center justify-center gap-2 bg-foreground/5 hover:bg-foreground/10 text-foreground border border-foreground/10 rounded-full py-3 px-4 transition-colors"
               >
                 <span className="text-lg">G</span>
-                <span>Sign in with Google</span>
+                <span>Sign in with GitHub</span>
               </button>
 
               <div className="flex items-center gap-4">
-                <div className="h-px bg-white/10 flex-1" />
-                <span className="text-white/40 text-sm">or</span>
-                <div className="h-px bg-white/10 flex-1" />
+                <div className="h-px bg-foreground/10 flex-1" />
+                <span className="text-muted/70 text-sm">or</span>
+                <div className="h-px bg-foreground/10 flex-1" />
               </div>
 
               <form onSubmit={handleEmailSubmit}>
@@ -517,12 +518,12 @@ function SignInPageInner({ className, noShell }: SignInPageProps) {
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full backdrop-blur-[1px] text-white border-1 border-white/10 rounded-full py-3 px-4 focus:outline-none focus:border focus:border-white/30 text-center"
+                    className="w-full backdrop-blur-[1px] text-foreground border-1 border-foreground/10 rounded-full py-3 px-4 focus:outline-none focus:border focus:border-foreground/30 text-center"
                     required
                   />
                   <button
                     type="submit"
-                    className="absolute right-1.5 top-1.5 text-white w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors group overflow-hidden"
+                    className="absolute right-1.5 top-1.5 text-foreground w-9 h-9 flex items-center justify-center rounded-full bg-foreground/10 hover:bg-foreground/20 transition-colors group overflow-hidden"
                   >
                     <span className="relative w-full h-full block overflow-hidden">
                       <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:translate-x-full">
@@ -537,8 +538,8 @@ function SignInPageInner({ className, noShell }: SignInPageProps) {
               </form>
             </div>
 
-            <p className="text-xs text-white/40 pt-10">
-              By signing up, you agree to <Link href="#" className="underline text-white/40 hover:text-white/60 transition-colors">our Terms of Service</Link>, <Link href="#" className="underline text-white/40 hover:text-white/60 transition-colors">Internship Policies</Link>, <Link href="#" className="underline text-white/40 hover:text-white/60 transition-colors">Privacy Notice</Link>, and <Link href="#" className="underline text-white/40 hover:text-white/60 transition-colors">Cookie Notice</Link>.
+            <p className="text-xs text-muted/70 pt-10">
+              By signing up, you agree to <Link href="#" className="underline text-muted/70 hover:text-muted transition-colors">our Terms of Service</Link>, <Link href="#" className="underline text-muted/70 hover:text-muted transition-colors">Internship Policies</Link>, <Link href="#" className="underline text-muted/70 hover:text-muted transition-colors">Privacy Notice</Link>, and <Link href="#" className="underline text-muted/70 hover:text-muted transition-colors">Cookie Notice</Link>.
             </p>
           </motion.div>
         ) : step === "code" ? (
@@ -551,12 +552,12 @@ function SignInPageInner({ className, noShell }: SignInPageProps) {
             className="space-y-6 text-center"
           >
             <div className="space-y-1">
-              <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-tight text-white">We sent you a code</h1>
-              <p className="text-[1.25rem] text-white/50 font-light">Please enter it</p>
+              <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-tight text-foreground">We sent you a code</h1>
+              <p className="text-[1.25rem] text-muted/80 font-light">Please enter it</p>
             </div>
 
             <div className="w-full">
-              <div className="relative rounded-full py-4 px-5 border border-white/10 bg-transparent">
+              <div className="relative rounded-full py-4 px-5 border border-foreground/10 bg-transparent">
                 <div className="flex items-center justify-center">
                   {code.map((digit, i) => (
                     <div key={i} className="flex items-center">
@@ -572,16 +573,16 @@ function SignInPageInner({ className, noShell }: SignInPageProps) {
                           value={digit}
                           onChange={e => handleCodeChange(i, e.target.value)}
                           onKeyDown={e => handleKeyDown(i, e)}
-                          className="w-8 text-center text-xl bg-transparent text-white border-none focus:outline-none focus:ring-0 appearance-none"
+                          className="w-8 text-center text-xl bg-transparent text-foreground border-none focus:outline-none focus:ring-0 appearance-none"
                           style={{ caretColor: 'transparent' }}
                         />
                         {!digit && (
                           <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center pointer-events-none">
-                            <span className="text-xl text-white">0</span>
+                            <span className="text-xl text-foreground">0</span>
                           </div>
                         )}
                       </div>
-                      {i < 5 && <span className="text-white/20 text-xl">|</span>}
+                      {i < 5 && <span className="text-muted/40 text-xl">|</span>}
                     </div>
                   ))}
                 </div>
@@ -590,7 +591,7 @@ function SignInPageInner({ className, noShell }: SignInPageProps) {
 
             <div>
               <motion.p
-                className="text-white/50 hover:text-white/70 transition-colors cursor-pointer text-sm"
+                className="text-muted/80 hover:text-foreground/70 transition-colors cursor-pointer text-sm"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
               >
@@ -601,7 +602,7 @@ function SignInPageInner({ className, noShell }: SignInPageProps) {
             <div className="flex w-full gap-3">
               <motion.button
                 onClick={handleBackClick}
-                className="rounded-full bg-white text-black font-medium px-8 py-3 hover:bg-white/90 transition-colors w-[30%]"
+                className="rounded-full bg-foreground text-black font-medium px-8 py-3 hover:bg-foreground/90 transition-colors w-[30%]"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 transition={{ duration: 0.2 }}
@@ -616,8 +617,8 @@ function SignInPageInner({ className, noShell }: SignInPageProps) {
                 }}
                 className={`flex-1 rounded-full font-medium py-3 border transition-all duration-300 ${
                   code.every(d => d !== "")
-                  ? "bg-white text-black border-transparent hover:bg-white/90 cursor-pointer"
-                  : "bg-[#111] text-white/50 border-white/10 cursor-not-allowed"
+                  ? "bg-foreground text-black border-transparent hover:bg-foreground/90 cursor-pointer"
+                  : "bg-[#111] text-muted/80 border-foreground/10 cursor-not-allowed"
                 }`}
                 disabled={!code.every(d => d !== "")}
               >
@@ -626,8 +627,8 @@ function SignInPageInner({ className, noShell }: SignInPageProps) {
             </div>
 
             <div className="pt-16">
-              <p className="text-xs text-white/40">
-                By signing up, you agree to <Link href="#" className="underline text-white/40 hover:text-white/60 transition-colors">our Terms of Service</Link>, <Link href="#" className="underline text-white/40 hover:text-white/60 transition-colors">Internship Policies</Link>, <Link href="#" className="underline text-white/40 hover:text-white/60 transition-colors">Privacy Notice</Link>, and <Link href="#" className="underline text-white/40 hover:text-white/60 transition-colors">Cookie Notice</Link>.
+              <p className="text-xs text-muted/70">
+                By signing up, you agree to <Link href="#" className="underline text-muted/70 hover:text-muted transition-colors">our Terms of Service</Link>, <Link href="#" className="underline text-muted/70 hover:text-muted transition-colors">Internship Policies</Link>, <Link href="#" className="underline text-muted/70 hover:text-muted transition-colors">Privacy Notice</Link>, and <Link href="#" className="underline text-muted/70 hover:text-muted transition-colors">Cookie Notice</Link>.
               </p>
             </div>
           </motion.div>
@@ -641,8 +642,8 @@ function SignInPageInner({ className, noShell }: SignInPageProps) {
             className="space-y-6 text-center"
           >
             <div className="space-y-1 flex flex-col items-center">
-              <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-tight text-white whitespace-nowrap">Enter Password</h1>
-              <p className="text-[1.8rem] text-white/70 font-light">Please enter your password</p>
+              <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-tight text-foreground whitespace-nowrap">Enter Password</h1>
+              <p className="text-[1.8rem] text-foreground/70 font-light">Please enter your password</p>
             </div>
 
             <form onSubmit={handlePasswordSubmit}>
@@ -652,13 +653,13 @@ function SignInPageInner({ className, noShell }: SignInPageProps) {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full backdrop-blur-[1px] text-white border-1 border-white/10 rounded-full py-3 px-4 focus:outline-none focus:border focus:border-white/30 text-center"
+                  className="w-full backdrop-blur-[1px] text-foreground border-1 border-foreground/10 rounded-full py-3 px-4 focus:outline-none focus:border focus:border-foreground/30 text-center"
                   required
                   autoFocus
                 />
                 <button
                   type="submit"
-                  className="absolute right-1.5 top-1.5 text-white w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors group overflow-hidden"
+                  className="absolute right-1.5 top-1.5 text-foreground w-9 h-9 flex items-center justify-center rounded-full bg-foreground/10 hover:bg-foreground/20 transition-colors group overflow-hidden"
                 >
                   <span className="relative w-full h-full block overflow-hidden">
                     <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:translate-x-full">
@@ -676,7 +677,7 @@ function SignInPageInner({ className, noShell }: SignInPageProps) {
               <motion.button
                 type="button"
                 onClick={handlePasswordBackClick}
-                className="rounded-full bg-white text-black font-medium px-8 py-3 hover:bg-white/90 transition-colors w-[30%]"
+                className="rounded-full bg-foreground text-black font-medium px-8 py-3 hover:bg-foreground/90 transition-colors w-[30%]"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 transition={{ duration: 0.2 }}
@@ -688,8 +689,8 @@ function SignInPageInner({ className, noShell }: SignInPageProps) {
                 onClick={handlePasswordSubmit}
                 className={`flex-1 rounded-full font-medium py-3 border transition-all duration-300 ${
                   password.length >= 6
-                  ? "bg-white text-black border-transparent hover:bg-white/90 cursor-pointer"
-                  : "bg-[#111] text-white/50 border-white/10 cursor-not-allowed"
+                  ? "bg-foreground text-black border-transparent hover:bg-foreground/90 cursor-pointer"
+                  : "bg-[#111] text-muted/80 border-foreground/10 cursor-not-allowed"
                 }`}
                 disabled={password.length < 6}
               >
@@ -698,8 +699,8 @@ function SignInPageInner({ className, noShell }: SignInPageProps) {
             </div>
 
             <div className="pt-16">
-              <p className="text-xs text-white/40">
-                By signing up, you agree to <Link href="#" className="underline text-white/40 hover:text-white/60 transition-colors">our Terms of Service</Link>, <Link href="#" className="underline text-white/40 hover:text-white/60 transition-colors">Internship Policies</Link>, <Link href="#" className="underline text-white/40 hover:text-white/60 transition-colors">Privacy Notice</Link>, and <Link href="#" className="underline text-white/40 hover:text-white/60 transition-colors">Cookie Notice</Link>.
+              <p className="text-xs text-muted/70">
+                By signing up, you agree to <Link href="#" className="underline text-muted/70 hover:text-muted transition-colors">our Terms of Service</Link>, <Link href="#" className="underline text-muted/70 hover:text-muted transition-colors">Internship Policies</Link>, <Link href="#" className="underline text-muted/70 hover:text-muted transition-colors">Privacy Notice</Link>, and <Link href="#" className="underline text-muted/70 hover:text-muted transition-colors">Cookie Notice</Link>.
               </p>
             </div>
           </motion.div>
@@ -712,8 +713,8 @@ function SignInPageInner({ className, noShell }: SignInPageProps) {
             className="space-y-6 text-center"
           >
             <div className="space-y-1">
-              <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-tight text-white">You&apos;re in!</h1>
-              <p className="text-[1.25rem] text-white/50 font-light">Welcome</p>
+              <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-tight text-foreground">You&apos;re in!</h1>
+              <p className="text-[1.25rem] text-muted/80 font-light">Welcome</p>
             </div>
 
             <motion.div
@@ -734,7 +735,7 @@ function SignInPageInner({ className, noShell }: SignInPageProps) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1 }}
-                className="w-full rounded-full bg-white text-black font-medium py-3 hover:bg-white/90 transition-colors"
+                className="w-full rounded-full bg-foreground text-black font-medium py-3 hover:bg-foreground/90 transition-colors"
               >
                 Continue to Dashboard
               </motion.button>
@@ -755,9 +756,9 @@ function SignInPageInner({ className, noShell }: SignInPageProps) {
           transition={{ duration: 0.3, ease: 'easeOut' }}
           className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50
                      flex items-center gap-3 px-5 py-3.5 rounded-full
-                     border border-[#333] bg-[#090909] text-white shadow-2xl"
+                     border border-[#333] bg-[#090909] text-foreground shadow-2xl"
         >
-          <div className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white shrink-0">
+          <div className="w-5 h-5 rounded-full bg-foreground/10 flex items-center justify-center text-xs font-bold text-foreground shrink-0">
             G
           </div>
           <span className="text-sm font-medium tracking-tight whitespace-nowrap">

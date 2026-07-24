@@ -15,10 +15,10 @@ export default function InternshipsPage() {
 
         {/* Header */}
         <section className="space-y-3">
-          <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-tight text-white">
+          <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-tight text-foreground">
             Browse Internships
           </h1>
-          <p className="text-white/50 text-base font-light">
+          <p className="text-muted/80 text-base font-light">
             Curated, verified openings updated weekly. Apply directly — no recruiter required.
           </p>
         </section>

@@ -101,7 +101,7 @@ export function ResumeUploadModal({ isOpen, onClose, onUploadSuccess }: ResumeUp
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/85 backdrop-blur-sm"
+            className="absolute inset-0 bg-background/85 backdrop-blur-sm"
           />
 
           {/* Modal box */}
@@ -111,11 +111,11 @@ export function ResumeUploadModal({ isOpen, onClose, onUploadSuccess }: ResumeUp
             exit={{ opacity: 0, scale: 0.95 }}
             className="relative w-full max-w-md rounded-2xl border border-[#333] bg-[#090909] p-6 shadow-2xl overflow-hidden z-10"
           >
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-neutral-800 via-neutral-300 to-neutral-800" />
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-border-strong via-muted to-border-strong" />
 
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 text-white/40 hover:text-white transition-colors cursor-pointer"
+              className="absolute top-4 right-4 text-muted/70 hover:text-foreground transition-colors cursor-pointer"
               aria-label="Close"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -125,8 +125,8 @@ export function ResumeUploadModal({ isOpen, onClose, onUploadSuccess }: ResumeUp
 
             <div className="space-y-4">
               <div>
-                <h3 className="text-white font-bold text-base tracking-tight">Upload Resume</h3>
-                <p className="text-xs text-white/40 mt-1">Select an actual file or choose a mock resume template below.</p>
+                <h3 className="text-foreground font-bold text-base tracking-tight">Upload Resume</h3>
+                <p className="text-xs text-muted/70 mt-1">Select an actual file or choose a mock resume template below.</p>
               </div>
 
               {!isUploading ? (
@@ -147,31 +147,31 @@ export function ResumeUploadModal({ isOpen, onClose, onUploadSuccess }: ResumeUp
                     onDragLeave={handleDrag}
                     onDrop={handleDrop}
                     onClick={onButtonClick}
-                    className={`border border-dashed rounded-xl p-6 bg-black/50 text-center transition-all cursor-pointer ${
-                      dragActive ? 'border-white bg-white/5' : 'border-[#1c1c1c] hover:border-[#333]'
+                    className={`border border-dashed rounded-xl p-6 bg-background/50 text-center transition-all cursor-pointer ${
+                      dragActive ? 'border-foreground bg-foreground/5' : 'border-[#1c1c1c] hover:border-[#333]'
                     }`}
                   >
-                    <svg className="w-6 h-6 text-white/20 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-6 h-6 text-muted/40 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                     </svg>
                     
                     {selectedFile ? (
                       <div className="mt-2">
                         <span className="text-xs text-green-400 font-medium block">File Selected:</span>
-                        <span className="text-xs text-white font-bold block truncate max-w-xs mx-auto">{selectedFile.name}</span>
-                        <span className="text-[10px] text-white/45 mt-0.5 block">({(selectedFile.size / 1024).toFixed(0)} KB)</span>
+                        <span className="text-xs text-foreground font-bold block truncate max-w-xs mx-auto">{selectedFile.name}</span>
+                        <span className="text-[10px] text-foreground/45 mt-0.5 block">({(selectedFile.size / 1024).toFixed(0)} KB)</span>
                       </div>
                     ) : (
                       <>
-                        <span className="text-xs text-white/70 block mt-2 font-medium">Drag & Drop your resume here</span>
-                        <span className="text-[10px] text-white/30 block mt-1">or click to browse local files (.pdf, .doc, .docx)</span>
+                        <span className="text-xs text-foreground/70 block mt-2 font-medium">Drag & Drop your resume here</span>
+                        <span className="text-[10px] text-foreground/30 block mt-1">or click to browse local files (.pdf, .doc, .docx)</span>
                       </>
                     )}
                   </div>
 
                   {/* Preset Mocks Choice */}
                   <div className="space-y-2">
-                    <label className="text-[10px] text-white/50 uppercase tracking-wider font-semibold">Or pick a templates template</label>
+                    <label className="text-[10px] text-muted/80 uppercase tracking-wider font-semibold">Or pick a templates template</label>
                     <div className="grid grid-cols-1 gap-2">
                       {mockFiles.map(file => {
                         const isSelected = mockSelected === file;
@@ -182,8 +182,8 @@ export function ResumeUploadModal({ isOpen, onClose, onUploadSuccess }: ResumeUp
                             onClick={() => handleMockSelect(file)}
                             className={`w-full text-left p-3 rounded-xl border transition-all text-xs flex justify-between items-center cursor-pointer ${
                               isSelected 
-                                ? 'bg-white text-black border-transparent font-medium' 
-                                : 'bg-black border-[#1c1c1c] text-white/60 hover:bg-[#121212] hover:text-white hover:border-[#333]'
+                                ? 'bg-foreground text-black border-transparent font-medium' 
+                                : 'bg-black border-[#1c1c1c] text-muted hover:bg-[#121212] hover:text-foreground hover:border-[#333]'
                             }`}
                           >
                             <span className="truncate max-w-xs">{file}</span>
@@ -201,22 +201,22 @@ export function ResumeUploadModal({ isOpen, onClose, onUploadSuccess }: ResumeUp
                   <button
                     type="submit"
                     disabled={!hasSelection}
-                    className="w-full rounded-full bg-white text-black hover:bg-white/90 disabled:bg-neutral-800 disabled:text-neutral-500 font-semibold py-2.5 transition-colors text-xs cursor-pointer"
+                    className="w-full rounded-full bg-foreground text-black hover:bg-foreground/90 disabled:bg-border-strong disabled:text-neutral-500 font-semibold py-2.5 transition-colors text-xs cursor-pointer"
                   >
                     Upload Selected Resume
                   </button>
                 </form>
               ) : (
                 <div className="py-8 space-y-4 text-center">
-                  <span className="text-xs text-white/70 font-semibold truncate block max-w-xs mx-auto">Uploading {displayName}...</span>
+                  <span className="text-xs text-foreground/70 font-semibold truncate block max-w-xs mx-auto">Uploading {displayName}...</span>
                   <div className="w-full bg-[#1c1c1c] rounded-full h-1.5 overflow-hidden">
                     <motion.div 
-                      className="bg-white h-1.5 rounded-full"
+                      className="bg-foreground h-1.5 rounded-full"
                       style={{ width: `${uploadProgress}%` }}
                       layout
                     />
                   </div>
-                  <span className="text-[10px] text-white/40 block mt-1">{uploadProgress}% uploaded</span>
+                  <span className="text-[10px] text-muted/70 block mt-1">{uploadProgress}% uploaded</span>
                 </div>
               )}
             </div>

@@ -15,10 +15,10 @@ export default function FaqPage() {
 
         {/* Header */}
         <section className="space-y-3">
-          <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-tight text-white">
+          <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-tight text-foreground">
             Frequently Asked<br />Questions
           </h1>
-          <p className="text-white/50 text-base font-light">
+          <p className="text-muted/80 text-base font-light">
             Everything you need to know before you start applying.
           </p>
         </section>
@@ -28,9 +28,9 @@ export default function FaqPage() {
 
         {/* Footer nudge */}
         <section className="text-center pt-4">
-          <p className="text-white/40 text-sm">
+          <p className="text-muted/70 text-sm">
             Still have questions?{' '}
-            <a href="mailto:hello@devstart.dev" className="text-white/60 underline hover:text-white transition-colors duration-200">
+            <a href="mailto:hello@devstart.dev" className="text-muted underline hover:text-foreground transition-colors duration-200">
               Drop us a line
             </a>
             {' '}and we&apos;ll get back to you within 24 hours.

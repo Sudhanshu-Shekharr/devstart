@@ -44,3 +44,9 @@ next-env.d.ts
 
 # design system
 design_system.md
+/src/generated/prisma
+
+# documentation and assets
+assets/
+context.md
+IMPROVEMENTS.md

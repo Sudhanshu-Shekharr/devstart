@@ -81,12 +81,12 @@ export function FaqAccordion() {
               className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left"
               aria-expanded={isOpen}
             >
-              <span className={cn('text-sm font-medium leading-snug transition-colors duration-200', isOpen ? 'text-white' : 'text-white/70')}>
+              <span className={cn('text-sm font-medium leading-snug transition-colors duration-200', isOpen ? 'text-foreground' : 'text-foreground/70')}>
                 {item.q}
               </span>
               <span
                 className={cn(
-                  'shrink-0 w-5 h-5 text-white/40 transition-transform duration-400 ease-out',
+                  'shrink-0 w-5 h-5 text-muted/70 transition-transform duration-400 ease-out',
                   isOpen ? 'rotate-180' : 'rotate-0',
                 )}
               >
@@ -106,7 +106,7 @@ export function FaqAccordion() {
                   className="overflow-hidden"
                 >
                   <div className="px-6 pb-5">
-                    <p className="text-white/50 text-sm leading-relaxed">{item.a}</p>
+                    <p className="text-muted/80 text-sm leading-relaxed">{item.a}</p>
                   </div>
                 </motion.div>
               )}

@@ -25,7 +25,7 @@ export function ClientShell({ children }: ClientShellProps) {
       <SiteNav />
 
       {/* Page content — swaps on navigation */}
-      <div className="relative z-10 flex flex-col flex-1">
+      <div className="flex flex-col flex-1">
         {children}
       </div>
     </div>
