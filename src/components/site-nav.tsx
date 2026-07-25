@@ -160,7 +160,7 @@ export function SiteNav() {
       onClick={() => router.push('/?flow=signup')}
       className="px-2.5 py-1.5 lg:px-4 lg:py-2 text-xs lg:text-sm rounded-full transition-all duration-200 z-10 w-full md:w-auto bg-foreground text-black font-medium hover:bg-foreground/90 cursor-pointer"
     >
-      Sign up to Devstart
+      Sign up
     </button>
   );
 
