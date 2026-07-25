@@ -8,24 +8,11 @@ import { POST as uploadResume } from '../src/app/api/resume/upload/route';
 import { DELETE as deleteResume } from '../src/app/api/resume/route';
 import { GET as getInternships } from '../src/app/api/internships/route';
 import { NextRequest } from 'next/server';
-import * as nextAuth from 'next-auth';
 
 // ─── Mock getServerSession for testing route handlers directly ──────────────────
 let currentTestUserId = '';
 
-const nextAuthNext = require('next-auth/next');
-nextAuthNext.getServerSession = async () => {
-  if (!currentTestUserId) return null;
-  const u = await prisma.user.findUnique({ where: { id: currentTestUserId } });
-  if (!u) return null;
-  return {
-    user: {
-      id: u.id,
-      email: u.email,
-      name: u.name,
-    },
-  };
-};
+// Auth has migrated to Supabase. This script would need updating to mock Supabase if required.
 
 async function main() {
   console.log('====================================================');
