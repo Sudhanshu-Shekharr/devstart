@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useSession } from 'next-auth/react';
+import { createClient } from '@/utils/supabase/client';
 
 interface ApplicationModalProps {
   isOpen: boolean;
@@ -23,16 +23,16 @@ export function ApplicationModal({ isOpen, onClose, internship, onSubmitSuccess 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const { data: session } = useSession();
+  const supabase = createClient();
 
   useEffect(() => {
     if (isOpen) {
-      if (session?.user?.email) {
-        setEmail(session.user.email);
-      }
-      if (session?.user?.name) {
-        setName(session.user.name);
-      }
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.user?.email) {
+          setEmail(session.user.email);
+          setName(session.user.user_metadata?.full_name || session.user.user_metadata?.name || 'User');
+        }
+      });
       setIsSuccess(false);
       setIsSubmitting(false);
       setPitch('');

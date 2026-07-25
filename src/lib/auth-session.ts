@@ -2,7 +2,7 @@ import { createClient } from '@/utils/supabase/server';
 import { prisma } from '@/lib/prisma';
 
 /**
- * Drop-in replacement for next-auth's getServerSession.
+ * Drop-in replacement for the old getServerSession.
  * Verifies Supabase session, retrieves/upserts the Prisma User,
  * and returns the session in the shape downstream code expects:
  * { user: { id: prismaUser.id, email: prismaUser.email, name?: string } }

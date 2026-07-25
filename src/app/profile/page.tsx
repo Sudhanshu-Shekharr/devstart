@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, KeyboardEvent } from 'react';
-import { useSession } from 'next-auth/react';
+import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -120,7 +120,7 @@ function SkillChip({ label, onRemove }: { label: string; onRemove: () => void })
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function ProfilePage() {
-  const { status } = useSession();
+  const [status, setStatus] = useState<'loading' | 'unauthenticated' | 'authenticated'>('loading');
   const router = useRouter();
 
   // ── State ──────────────────────────────────────────────────────────────────
@@ -131,12 +131,30 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [saveState, setSaveState] = useState<SaveState>('idle');
 
-  // ── Redirect if unauthenticated ────────────────────────────────────────────
+  // ── Auth Check ────────────────────────────────────────────────────────────
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/?flow=login');
-    }
-  }, [status, router]);
+    const supabase = createClient();
+    
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setStatus('authenticated');
+      } else {
+        setStatus('unauthenticated');
+        router.push('/?flow=login');
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        setStatus('authenticated');
+      } else {
+        setStatus('unauthenticated');
+        router.push('/?flow=login');
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [router]);
 
   // ── Pre-fill from API ──────────────────────────────────────────────────────
   const loadProfile = useCallback(async () => {
