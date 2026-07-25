@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { getServerSession } from '@/lib/auth-session';
 import { prisma } from '@/lib/prisma';
 import { ratelimit } from '@/lib/ratelimit';
 import { scoreMatch, hasProfile } from '@/lib/scoreMatch';
@@ -96,7 +95,7 @@ export async function GET(request: NextRequest) {
   // getServerSession is cheap (reads JWT from cookie, no network call), so
   // we run it alongside the DB query to avoid adding latency on the hot path.
   const [sessionResult, internships, total] = await Promise.all([
-    getServerSession(authOptions),
+    getServerSession(),
     prisma.internship.findMany({
       where,
       select: {

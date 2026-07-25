@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from '@/lib/auth-session';
 import { z } from 'zod';
 import sanitizeHtml from 'sanitize-html';
 import { prisma } from '@/lib/prisma';
 import { isSafeUrl } from '@/lib/ssrf';
 import { generateInternshipHash } from '@/lib/hash';
-import { authOptions } from '@/lib/auth';
 import { ratelimit } from '@/lib/ratelimit';
 
 export const internshipSchema = z.object({
@@ -28,7 +27,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
     }
 
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession();
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

@@ -5,7 +5,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useSession, signOut } from 'next-auth/react';
+import { createClient } from '@/utils/supabase/client';
+import { User } from '@supabase/supabase-js';
 
 /* -------------------------------------------------------------------------- */
 /*  AnimatedNavLink — hover slides duplicate text upward (DESIGN_SYSTEM.md)  */
@@ -54,11 +55,27 @@ export function SiteNav() {
   const [headerShapeClass, setHeaderShapeClass] = useState('rounded-full');
   const shapeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Auth State from NextAuth
-  const { data: session, status } = useSession();
-  const isLoggedIn = status === 'authenticated';
-  const isAuthLoading = status === 'loading';
-  const userEmail = session?.user?.email || '';
+  // Auth State from Supabase
+  const supabase = createClient();
+  const [sessionUser, setSessionUser] = useState<User | null>(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSessionUser(session?.user ?? null);
+      setIsAuthLoading(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSessionUser(session?.user ?? null);
+      setIsAuthLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const isLoggedIn = !!sessionUser;
+  const userEmail = sessionUser?.email || '';
   
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -94,8 +111,9 @@ export function SiteNav() {
     };
   }, [isOpen]);
 
-  const handleLogout = () => {
-    signOut({ callbackUrl: '/' });
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push('/');
   };
 
   const logoElement = (
@@ -142,7 +160,7 @@ export function SiteNav() {
       onClick={() => router.push('/?flow=signup')}
       className="px-2.5 py-1.5 lg:px-4 lg:py-2 text-xs lg:text-sm rounded-full transition-all duration-200 z-10 w-full md:w-auto bg-foreground text-black font-medium hover:bg-foreground/90 cursor-pointer"
     >
-      Signup
+      Sign up to Devstart
     </button>
   );
 
@@ -151,10 +169,7 @@ export function SiteNav() {
   }
 
   return (
-    <motion.header
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: 'easeOut' }}
+    <header
       className={cn(
         'fixed z-20',
         isLoggedIn
@@ -328,6 +343,6 @@ export function SiteNav() {
           </div>
         </div>
       )}
-    </motion.header>
+    </header>
   );
 }

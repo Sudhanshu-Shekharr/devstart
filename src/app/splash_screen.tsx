@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { signIn } from 'next-auth/react';
+import { createClient } from '@/utils/supabase/client';
 
 /* -------------------------------------------------------------------------- */
 /*  DottedSurface — animated waving-dots background (Three.js)                */
@@ -285,7 +285,7 @@ function MiniNavbar({ flowType, setFlowType, resetForm }: MiniNavbarProps) {
           : "border border-[#333] bg-[rgba(31,31,31,0.62)] text-muted hover:border-foreground/50 hover:text-foreground"
       )}
     >
-      Signup
+      Sign up to Devstart
     </button>
   );
 
@@ -375,9 +375,8 @@ function SignInPageInner({ className, noShell }: SignInPageProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [flowType, setFlowType] = useState<"signup" | "login">(initialFlow);
-  const [step, setStep] = useState<"email" | "code" | "password" | "success">("email");
-  const [code, setCode] = useState(["", "", "", "", "", ""]);
-  const codeInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [step, setStep] = useState<"email" | "password" | "success">("email");
+  const [errorMsg, setErrorMsg] = useState("");
 
   // Sync flowType when the URL query param changes (e.g. nav LogIn/Signup click)
   useEffect(() => {
@@ -403,66 +402,42 @@ function SignInPageInner({ className, noShell }: SignInPageProps) {
   const resetForm = () => {
     setEmail("");
     setPassword("");
-    setCode(["", "", "", "", "", ""]);
     setStep("email");
     setBackgroundPulse(false);
+    setErrorMsg("");
   };
 
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMsg("");
     if (email) {
-      if (flowType === "signup") {
-        setStep("code");
-      } else {
-        setStep("password");
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (step === "code") {
-      setTimeout(() => {
-        codeInputRefs.current[0]?.focus();
-      }, 500);
-    }
-  }, [step]);
-
-  const handleCodeChange = (index: number, value: string) => {
-    if (value.length <= 1) {
-      const newCode = [...code];
-      newCode[index] = value;
-      setCode(newCode);
-
-      if (value && index < 5) {
-        codeInputRefs.current[index + 1]?.focus();
-      }
-
-      if (index === 5 && value) {
-        const isComplete = newCode.every(digit => digit.length === 1);
-        if (isComplete) {
-          setTimeout(() => {
-            setStep("password");
-          }, 500);
-        }
-      }
-    }
-  };
-
-  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Backspace" && !code[index] && index > 0) {
-      codeInputRefs.current[index - 1]?.focus();
+      setStep("password");
     }
   };
 
   const handleBackClick = () => {
     setStep("email");
-    setCode(["", "", "", "", "", ""]);
     setBackgroundPulse(false);
+    setErrorMsg("");
   };
 
-  const handlePasswordSubmit = (e: React.FormEvent) => {
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMsg("");
     if (password.length >= 6) {
+      const supabase = createClient();
+      let res;
+      if (flowType === "signup") {
+        res = await supabase.auth.signUp({ email, password });
+      } else {
+        res = await supabase.auth.signInWithPassword({ email, password });
+      }
+
+      if (res.error) {
+        setErrorMsg(res.error.message);
+        return;
+      }
+
       if (typeof window !== 'undefined') {
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('userEmail', email);
@@ -475,11 +450,8 @@ function SignInPageInner({ className, noShell }: SignInPageProps) {
   };
 
   const handlePasswordBackClick = () => {
-    if (flowType === "signup") {
-      setStep("code");
-    } else {
-      setStep("email");
-    }
+    setStep("email");
+    setErrorMsg("");
   };
 
   const formContent = (
@@ -500,20 +472,7 @@ function SignInPageInner({ className, noShell }: SignInPageProps) {
             </div>
 
             <div className="space-y-4">
-              <button
-                type="button"
-                onClick={() => signIn('github', { callbackUrl: '/dashboard' })}
-                className="backdrop-blur-[2px] w-full flex items-center justify-center gap-2 bg-foreground/5 hover:bg-foreground/10 text-foreground border border-foreground/10 rounded-full py-3 px-4 transition-colors"
-              >
-                <span className="text-lg">G</span>
-                <span>Sign in with GitHub</span>
-              </button>
-
-              <div className="flex items-center gap-4">
-                <div className="h-px bg-foreground/10 flex-1" />
-                <span className="text-muted/70 text-sm">or</span>
-                <div className="h-px bg-foreground/10 flex-1" />
-              </div>
+              {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
 
               <form onSubmit={handleEmailSubmit}>
                 <div className="relative">
@@ -546,96 +505,7 @@ function SignInPageInner({ className, noShell }: SignInPageProps) {
               By signing up, you agree to <Link href="#" className="underline text-muted/70 hover:text-muted transition-colors">our Terms of Service</Link>, <Link href="#" className="underline text-muted/70 hover:text-muted transition-colors">Internship Policies</Link>, <Link href="#" className="underline text-muted/70 hover:text-muted transition-colors">Privacy Notice</Link>, and <Link href="#" className="underline text-muted/70 hover:text-muted transition-colors">Cookie Notice</Link>.
             </p>
           </motion.div>
-        ) : step === "code" ? (
-          <motion.div
-            key="code-step"
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 100 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            className="space-y-6 text-center"
-          >
-            <div className="space-y-1">
-              <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-tight text-foreground">We sent you a code</h1>
-              <p className="text-[1.25rem] text-muted/80 font-light">Please enter it</p>
-            </div>
 
-            <div className="w-full">
-              <div className="relative rounded-full py-4 px-5 border border-foreground/10 bg-transparent">
-                <div className="flex items-center justify-center">
-                  {code.map((digit, i) => (
-                    <div key={i} className="flex items-center">
-                      <div className="relative">
-                        <input
-                          ref={(el) => {
-                            codeInputRefs.current[i] = el;
-                          }}
-                          type="text"
-                          inputMode="numeric"
-                          pattern="[0-9]*"
-                          maxLength={1}
-                          value={digit}
-                          onChange={e => handleCodeChange(i, e.target.value)}
-                          onKeyDown={e => handleKeyDown(i, e)}
-                          className="w-8 text-center text-xl bg-transparent text-foreground border-none focus:outline-none focus:ring-0 appearance-none"
-                          style={{ caretColor: 'transparent' }}
-                        />
-                        {!digit && (
-                          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center pointer-events-none">
-                            <span className="text-xl text-foreground">0</span>
-                          </div>
-                        )}
-                      </div>
-                      {i < 5 && <span className="text-muted/40 text-xl">|</span>}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <motion.p
-                className="text-muted/80 hover:text-foreground/70 transition-colors cursor-pointer text-sm"
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-              >
-                Resend code
-              </motion.p>
-            </div>
-
-            <div className="flex w-full gap-3">
-              <motion.button
-                onClick={handleBackClick}
-                className="rounded-full bg-foreground text-black font-medium px-8 py-3 hover:bg-foreground/90 transition-colors w-[30%]"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ duration: 0.2 }}
-              >
-                Back
-              </motion.button>
-              <motion.button
-                onClick={() => {
-                  if (code.every(d => d !== "")) {
-                    setStep("password");
-                  }
-                }}
-                className={`flex-1 rounded-full font-medium py-3 border transition-all duration-300 ${
-                  code.every(d => d !== "")
-                  ? "bg-foreground text-black border-transparent hover:bg-foreground/90 cursor-pointer"
-                  : "bg-[#111] text-muted/80 border-foreground/10 cursor-not-allowed"
-                }`}
-                disabled={!code.every(d => d !== "")}
-              >
-                Continue
-              </motion.button>
-            </div>
-
-            <div className="pt-16">
-              <p className="text-xs text-muted/70">
-                By signing up, you agree to <Link href="#" className="underline text-muted/70 hover:text-muted transition-colors">our Terms of Service</Link>, <Link href="#" className="underline text-muted/70 hover:text-muted transition-colors">Internship Policies</Link>, <Link href="#" className="underline text-muted/70 hover:text-muted transition-colors">Privacy Notice</Link>, and <Link href="#" className="underline text-muted/70 hover:text-muted transition-colors">Cookie Notice</Link>.
-              </p>
-            </div>
-          </motion.div>
         ) : step === "password" ? (
           <motion.div
             key="password-step"
@@ -648,6 +518,7 @@ function SignInPageInner({ className, noShell }: SignInPageProps) {
             <div className="space-y-1 flex flex-col items-center">
               <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-tight text-foreground whitespace-nowrap">Enter Password</h1>
               <p className="text-[1.8rem] text-foreground/70 font-light">Please enter your password</p>
+              {errorMsg && <p className="text-red-500 text-sm mt-2">{errorMsg}</p>}
             </div>
 
             <form onSubmit={handlePasswordSubmit}>
