@@ -290,7 +290,11 @@ function MiniNavbar({ flowType, setFlowType, resetForm }: MiniNavbarProps) {
   );
 
   return (
-    <header className={`fixed top-6 left-1/2 transform -translate-x-1/2 z-20
+    <motion.header 
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
+      className={`fixed top-6 left-1/2 transform -translate-x-1/2 z-20
                        flex flex-col items-center
                        pl-6 pr-6 py-3 backdrop-blur-sm
                        ${headerShapeClass}
@@ -345,7 +349,7 @@ function MiniNavbar({ flowType, setFlowType, resetForm }: MiniNavbarProps) {
           {signupButtonElement}
         </div>
       </div>
-    </header>
+    </motion.header>
   );
 }
 

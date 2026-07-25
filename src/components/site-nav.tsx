@@ -147,19 +147,20 @@ export function SiteNav() {
   );
 
   if (isAuthLoading) {
-    return (
-      <header className="fixed z-20 top-0 left-0 w-full h-[72px] flex items-center justify-center bg-transparent border-none pointer-events-none" />
-    );
+    return null;
   }
 
   return (
-    <header
+    <motion.header
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
       className={cn(
-        'fixed z-20 transition-all duration-300 ease-in-out',
+        'fixed z-20',
         isLoggedIn
-          ? 'top-0 left-0 w-full h-[72px] flex items-center justify-center backdrop-blur-md bg-black/40 border-b border-white/5'
+          ? 'top-0 left-0 w-full h-[72px] flex items-center justify-center backdrop-blur-md bg-black/40 border-b border-white/5 transition-all duration-300'
           : cn(
-              'top-6 left-1/2 transform -translate-x-1/2 flex flex-col items-center',
+              'top-6 left-1/2 transform -translate-x-1/2 flex flex-col items-center transition-[border-radius,background-color] duration-300',
               'pl-6 pr-6 py-3 backdrop-blur-sm',
               headerShapeClass,
               'border border-[#333] bg-[#1f1f1f57]',
@@ -327,6 +328,6 @@ export function SiteNav() {
           </div>
         </div>
       )}
-    </header>
+    </motion.header>
   );
 }
