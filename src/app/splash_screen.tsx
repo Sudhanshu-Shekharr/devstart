@@ -434,7 +434,11 @@ function SignInPageInner({ className, noShell }: SignInPageProps) {
       }
 
       if (res.error) {
-        setErrorMsg(res.error.message);
+        if (res.error.status === 429 || res.error.message.includes('rate limit')) {
+          setErrorMsg("Too many attempts, please try again later.");
+        } else {
+          setErrorMsg(res.error.message);
+        }
         return;
       }
 
